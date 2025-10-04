@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+.header-container {
+  width: 25%;
+  margin: 15px auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.boxes-container {
+  width: fit-content;
+  margin: auto;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  grid-template-rows: 1fr;
+  gap: 10px;
+}
+
+.week-box {
+  height: 70px;
+  width: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.day-box {
+  height: 10px;
+  width: 30px;
+  border: 1px solid lightgray;
+  position: relative;
+  display: inline-block;
+}
+
+.day-lived {
+  border: 0px;
+  background-color: gray;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 130px;
+  background-color: gray;
+  color: #ffff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+}
+
+.day-box:hover .tooltip-text {
+  visibility: visible;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  width: 80%;
+}
+
+.modal-block {
+  display: block;
+}
