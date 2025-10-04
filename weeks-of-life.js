@@ -1,13 +1,13 @@
 const YEARS_LIFE_EXPECTANCY = 72.51; // * Source for Venezuela https://datosmacro.expansion.com/demografia/esperanza-vida/venezuela
 const NUMBER_DAYS_WEEK = 7;
 const NAME_DAYS_WEEK = [
-  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
   'Saturday',
+  'Sunday',
 ];
 
 //? Utility functions
@@ -26,6 +26,17 @@ function getDayName(index) {
 
 function getYearsFromWeeks(weeks) {
   return Math.ceil(weeks * (1 / 52.1429)); //* 1.1 || 1.2 || 1.09 mean the user is on the 2 year of his life.
+}
+
+function getAge(birthDate, dateNow = new Date()) {
+  let age = dateNow.getFullYear() - birthDate.getFullYear();
+  const month = dateNow.getMonth() - birthDate.getMonth();
+
+  if (month < 0 || (month === 0 && dateNow.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
 }
 
 //* Logical functions
@@ -87,16 +98,24 @@ function renderTooltip(weekId, dayId, date) {
   return tooltip;
 }
 
-function renderModal(weekId) {
+function renderModal(weekId, dateString, birthDate) {
   const weekNumber = Number(weekId) + 1;
-  const yearOfLife = getYearsFromWeeks(weekNumber);
+  const date = new Date(dateString);
+
+  const age = getAge(birthDate, date);
+
+  const dateEnd = date.toDateString();
+  date.setDate(date.getDate() - 6);
+  const dateStart = date.toDateString();
 
   const modal = document.createElement('div');
   const modalContent = document.createElement('div');
 
   modalContent.innerHTML = `
     <span>${`Week: ${weekNumber}`}</span>
-    <span>${`Year of life: ${yearOfLife}`}</span>
+    <span>${`Age: ${age}`}</span>
+    <span>${`Date Start: ${dateStart}`}</span>
+    <span>${`Date End: ${dateEnd}`}</span>
   `;
 
   modalContent.classList.add('modal-content');
@@ -112,24 +131,29 @@ function setDaysLived(date) {
   const timeNow = new Date();
   const timeBirthday = new Date(date + 'T00:00:00');
 
+  const birthDay = timeBirthday.getDate();
+  const birthMonth = timeBirthday.getMonth();
+
+  const birthDate = new Date(timeBirthday);
+
   const days = document.querySelectorAll('.day');
 
   let daysLived = getDaysFromMiliseconds(
     timeNow.getTime() - timeBirthday.getTime(),
   );
 
-  let paintCondition = timeBirthday.getDay(); //? If paintCondition equals 0, the day sunday on week 1 is painted. 0-6 => sunday-saturday
+  let paintCondition = timeBirthday.getDay() - 1; //? If paintCondition equals 0, the day sunday on week 1 is painted. 0-6 => sunday-saturday
   let week;
 
-  timeBirthday.setDate(timeBirthday.getDate() + timeBirthday.getDay() * -1);
+  timeBirthday.setDate(
+    timeBirthday.getDate() -
+      (timeBirthday.getDay() - 1 >= 0 ? timeBirthday.getDay() - 1 : 6),
+  );
 
-  days.forEach((day, index) => {
+  days.forEach((day) => {
     //* Append Modal into each week item.
     if (!week || week.id !== day.parentElement.id) {
       week = day.parentElement;
-
-      const modal = renderModal(week.id);
-      week.appendChild(modal);
     }
 
     //* Append tooltip into each day item.
@@ -140,6 +164,23 @@ function setDaysLived(date) {
     if (paintCondition <= 0 && daysLived) {
       day.classList.add('lived');
       daysLived--;
+    }
+
+    //* Paint birthday.
+    if (
+      birthDay === timeBirthday.getDate() &&
+      birthMonth === timeBirthday.getMonth()
+    ) {
+      day.classList.add('birthday');
+    }
+
+    if (day.id === '6') {
+      const modal = renderModal(
+        week.id,
+        timeBirthday.toDateString(),
+        birthDate,
+      );
+      week.appendChild(modal);
     }
 
     paintCondition--;
@@ -161,6 +202,7 @@ function reset() {
       day.removeChild(day.lastChild); //* Remove all tooltips.
 
       day.classList.remove('lived'); //* Remove painted cells.
+      day.classList.remove('birthday'); //* Remove painted cells.
     });
   });
 }
