@@ -8,14 +8,14 @@ body {
   margin: 0px;
 }
 
-.header-container {
+.header {
   width: 25%;
-  margin: 15px auto;
+  margin: 10px auto 10px auto;
   display: flex;
   flex-direction: column;
 }
 
-.boxes-container {
+.container {
   width: fit-content;
   margin: auto;
   border: 2px solid lightgray;
@@ -27,7 +27,7 @@ body {
   gap: 10px;
 }
 
-.week-box {
+.week {
   height: 70px;
   width: 30px;
   display: flex;
@@ -35,7 +35,7 @@ body {
   gap: 1px;
 }
 
-.day-box {
+.day {
   height: 10px;
   width: 30px;
   border: 1px solid lightgray;
@@ -43,13 +43,18 @@ body {
   display: inline-block;
 }
 
-.day-lived {
+.lived {
   border: 0px;
   background-color: gray;
   cursor: pointer;
 }
 
-.tooltip-text {
+.day:hover {
+  background-color: mediumpurple;
+  /* ? For a better visualization. */
+}
+
+.tooltip {
   visibility: hidden;
   width: 130px;
   background-color: gray;
@@ -59,9 +64,13 @@ body {
   border-radius: 6px;
   position: absolute;
   z-index: 1;
+  top: -5px;
+  right: 105%;
+  display: flex;
+  flex-direction: column;
 }
 
-.day-box:hover .tooltip-text {
+.day:hover .tooltip {
   visibility: visible;
 }
 
@@ -78,9 +87,16 @@ body {
 
 .modal-content {
   background-color: white;
-  margin: 15% auto;
+  margin: 30% auto;
   padding: 20px;
-  width: 80%;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.show-modal {
+  display: block;
 }
 
 .modal-block {

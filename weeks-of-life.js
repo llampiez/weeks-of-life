@@ -10,12 +10,14 @@ const NAME_DAYS_WEEK = [
   'Saturday',
 ];
 
+//? Utility functions
+
 function getWeeksFromYears(year) {
   return Math.round(year * 52.1429);
 }
 
 function getDaysFromMiliseconds(miliseconds) {
-  return Math.round(miliseconds * 1.15738e-8);
+  return Math.ceil(miliseconds * 1.15738e-8);
 }
 
 function getDayName(index) {
@@ -26,144 +28,159 @@ function getYearsFromWeeks(weeks) {
   return Math.ceil(weeks * (1 / 52.1429)); //* 1.1 || 1.2 || 1.09 mean the user is on the 2 year of his life.
 }
 
-function renderDayBoxes(weekBox) {
+//* Logical functions
+
+function renderDays(week) {
   for (let i = 0; i < NUMBER_DAYS_WEEK; i++) {
-    const dayBox = document.createElement('div');
+    const day = document.createElement('div');
 
-    dayBox.classList.add('day-box');
-    dayBox.id = i;
+    day.classList.add('day');
+    day.id = i;
 
-    weekBox.appendChild(dayBox);
+    week.appendChild(day);
   }
 }
 
-function renderWeekBoxes() {
-  const boxesContainer = document.querySelector('.boxes-container');
+function renderWeeks() {
+  const container = document.querySelector('.container');
 
-  const weeksOfLife = getWeeksFromYears(YEARS_LIFE_EXPECTANCY);
+  const totalWeeks = getWeeksFromYears(YEARS_LIFE_EXPECTANCY);
 
-  for (let i = 0; i < weeksOfLife; i++) {
-    const weekBox = document.createElement('div');
+  for (let i = 0; i < totalWeeks; i++) {
+    const week = document.createElement('div');
 
-    weekBox.classList.add('week-box');
-    weekBox.id = i + 1;
-    weekBox.addEventListener('click', (event) => {
-      const modal = weekBox.lastChild;
+    week.classList.add('week');
+    week.id = i;
 
-      modal.style.display = 'block';
+    week.addEventListener('click', () => {
+      const modal = week.lastChild;
+
+      modal.classList.add('show-modal');
 
       window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = 'none';
+        if (event.target === modal) {
+          modal.classList.remove('show-modal');
         }
       };
     });
 
-    renderDayBoxes(weekBox);
-
-    boxesContainer.appendChild(weekBox);
+    renderDays(week);
+    container.appendChild(week);
   }
 }
 
-function renderTooltip(weekNumber, dayName, formatedDate) {
-  const tooltipContent = document.createElement('div');
+function renderTooltip(weekId, dayId, date) {
+  const formatedDate = date.toDateString();
+  const dayName = getDayName(dayId);
+  const weekNumber = Number(weekId) + 1;
 
-  tooltipContent.innerHTML = `
-    <p>${`Week ${weekNumber}`}</p>
-    <p>${dayName}</p>
-    <p>${formatedDate}</p>
+  const tooltip = document.createElement('div');
 
+  tooltip.innerHTML = `
+    <span>${`Week ${weekNumber}`}</span>
+    <span>${dayName}</span>
+    <span>${formatedDate}</span>
   `;
 
-  tooltipContent.classList.add('tooltip-text');
-  return tooltipContent;
+  tooltip.classList.add('tooltip');
+
+  return tooltip;
 }
 
-function renderModal(weekNumber, yearOfLife, isLived) {
+function renderModal(weekId) {
+  const weekNumber = Number(weekId) + 1;
+  const yearOfLife = getYearsFromWeeks(weekNumber);
+
   const modal = document.createElement('div');
   const modalContent = document.createElement('div');
 
   modalContent.innerHTML = `
-    <p>${`Week: ${weekNumber}`}</p>
-    <p>${`Year of life: ${yearOfLife}`}</p>
-    <p>${`State: ${isLived ? 'Week lived' : 'Week yet to live'}`}</p>
+    <span>${`Week: ${weekNumber}`}</span>
+    <span>${`Year of life: ${yearOfLife}`}</span>
   `;
 
   modalContent.classList.add('modal-content');
   modal.classList.add('modal');
-
-  modal.id = weekNumber;
+  modal.id = weekId;
 
   modal.appendChild(modalContent);
 
   return modal;
 }
 
-function resetDaysLived() {
-  const dayLivedBoxes = document.querySelectorAll('.day-lived');
-
-  if (!dayLivedBoxes.length) return;
-
-  dayLivedBoxes.forEach((dayLivedBox) => {
-    dayLivedBox.classList.remove('day-lived');
-  });
-}
-
 function setDaysLived(date) {
   const timeNow = new Date();
   const timeBirthday = new Date(date + 'T00:00:00');
 
-  const dayBoxes = document.querySelectorAll('.day-box');
+  const days = document.querySelectorAll('.day');
 
-  const daysLived = getDaysFromMiliseconds(
+  let daysLived = getDaysFromMiliseconds(
     timeNow.getTime() - timeBirthday.getTime(),
   );
-  for (let i = 0; i < daysLived; i++) {
-    dayBoxes.item(i + timeBirthday.getDay()).classList.add('day-lived');
-  }
 
-  let weekBoxId;
+  let paintCondition = timeBirthday.getDay(); //? If paintCondition equals 0, the day sunday on week 1 is painted. 0-6 => sunday-saturday
+  let week;
 
   timeBirthday.setDate(timeBirthday.getDate() + timeBirthday.getDay() * -1);
 
-  dayBoxes.forEach((dayBox) => {
-    const dateOfDay = timeBirthday.toDateString();
+  days.forEach((day, index) => {
+    //* Append Modal into each week item.
+    if (!week || week.id !== day.parentElement.id) {
+      week = day.parentElement;
 
-    if (weekBoxId !== dayBox.parentElement.id) {
-      weekBoxId = dayBox.parentElement.id;
-
-      const weekBox = dayBox.parentElement;
-
-      const modal = renderModal(
-        weekBox.id,
-        getYearsFromWeeks(weekBox.id),
-        true,
-      );
-      weekBox.appendChild(modal);
+      const modal = renderModal(week.id);
+      week.appendChild(modal);
     }
 
-    const tooltip = renderTooltip(weekBoxId, getDayName(dayBox.id), dateOfDay);
+    //* Append tooltip into each day item.
+    const tooltip = renderTooltip(week.id, day.id, timeBirthday);
+    day.appendChild(tooltip);
 
-    dayBox.appendChild(tooltip);
+    //* Paint days.
+    if (paintCondition <= 0 && daysLived) {
+      day.classList.add('lived');
+      daysLived--;
+    }
 
+    paintCondition--;
     timeBirthday.setDate(timeBirthday.getDate() + 1);
   });
 }
 
-function initializate() {
-  const dateInput = document.querySelector('.date-input');
+function reset() {
+  const weeks = document.querySelectorAll('.week');
 
-  dateInput.addEventListener('change', (event) => {
+  if (weeks.item(0).lastChild.classList.value !== 'modal') return;
+
+  weeks.forEach((week) => {
+    week.removeChild(week.lastChild); //* Remove all modals.
+
+    const days = week.childNodes;
+
+    days.forEach((day) => {
+      day.removeChild(day.lastChild); //* Remove all tooltips.
+
+      day.classList.remove('lived'); //* Remove painted cells.
+    });
+  });
+}
+
+function initializate() {
+  renderWeeks();
+
+  const date = document.querySelector('.date');
+
+  date.value = ''; //* Reset his value.
+
+  date.addEventListener('change', (event) => {
     const { value } = event.target;
 
     if (value) {
       setDaysLived(value);
     } else {
-      resetDaysLived();
+      reset();
     }
   });
-
-  renderWeekBoxes();
 }
 
 initializate();
