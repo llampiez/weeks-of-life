@@ -9,7 +9,7 @@ body {
 }
 
 .header {
-  width: 200px;
+  width: 300px;
   margin: 10px auto 10px auto;
   display: flex;
   flex-direction: column;
@@ -18,6 +18,10 @@ body {
 
 .date {
   width: 100%;
+}
+
+.remaining-days {
+  margin: 0px;
 }
 
 .container {
@@ -44,19 +48,29 @@ body {
 .day {
   height: 10px;
   width: 30px;
-  border: 1px solid lightgray;
+  border: 1px solid gray;
   position: relative;
   display: inline-block;
   cursor: pointer;
 }
 
 .lived {
-  border: 0px;
   background-color: gray;
 }
 
 .birthday {
   background-color: darkred;
+  border: 1px solid darkred;
+}
+
+.day-lost {
+  background-color: lightgray;
+  border: 1px solid lightgray;
+}
+
+.not-lived {
+  background-color: black;
+  border: 1px solid black;
 }
 
 .day:hover {

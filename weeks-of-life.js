@@ -1,6 +1,6 @@
-const YEARS_LIFE_EXPECTANCY = 72.51; // * Source for Venezuela https://datosmacro.expansion.com/demografia/esperanza-vida/venezuela
-const NUMBER_DAYS_WEEK = 7;
-const NAME_DAYS_WEEK = [
+const LIFE_EXPECTANCY_YEARS = 72.51;
+const DAYS_PER_WEEK = 7;
+const WEEKDAY_NAMES = [
   'Monday',
   'Tuesday',
   'Wednesday',
@@ -10,29 +10,34 @@ const NAME_DAYS_WEEK = [
   'Sunday',
 ];
 
+let userBirthDate = null;
+
 //? Utility functions
 
-function getWeeksFromYears(year) {
-  return Math.round(year * 52.1429);
+function convertYearsToWeeks(years) {
+  return Math.ceil(years * 52.1429);
 }
 
-function getDaysFromMiliseconds(miliseconds) {
-  return Math.ceil(miliseconds * 1.15738e-8);
+function convertMillisecondsToDays(milliseconds) {
+  return Math.ceil(milliseconds * 1.15738e-8);
 }
 
-function getDayName(index) {
-  return NAME_DAYS_WEEK[index];
+function getWeekdayName(dayIndex) {
+  return WEEKDAY_NAMES[dayIndex];
 }
 
-function getYearsFromWeeks(weeks) {
-  return Math.ceil(weeks * (1 / 52.1429)); //* 1.1 || 1.2 || 1.09 mean the user is on the 2 year of his life.
+function convertWeeksToYears(weeks) {
+  return Math.ceil(weeks * (1 / 52.1429));
 }
 
-function getAge(birthDate, dateNow = new Date()) {
-  let age = dateNow.getFullYear() - birthDate.getFullYear();
-  const month = dateNow.getMonth() - birthDate.getMonth();
+function calculateAge(birthDate, currentDate = new Date()) {
+  let age = currentDate.getFullYear() - birthDate.getFullYear();
+  const monthDifference = currentDate.getMonth() - birthDate.getMonth();
 
-  if (month < 0 || (month === 0 && dateNow.getDate() < birthDate.getDate())) {
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
@@ -41,188 +46,264 @@ function getAge(birthDate, dateNow = new Date()) {
 
 //* Logical functions
 
-function renderDays(week) {
-  for (let i = 0; i < NUMBER_DAYS_WEEK; i++) {
-    const day = document.createElement('div');
+function createDaysForWeek(weekElement) {
+  for (let dayIndex = 0; dayIndex < DAYS_PER_WEEK; dayIndex++) {
+    const dayElement = document.createElement('div');
 
-    day.classList.add('day');
-    day.id = i;
+    dayElement.className = 'day';
+    dayElement.id = dayIndex;
 
-    week.appendChild(day);
-  }
-}
+    dayElement.addEventListener('mouseenter', function () {
+      if (userBirthDate && !this.querySelector('.tooltip')) {
+        const weekId = this.parentElement.id;
+        const dayId = this.id;
+        const storedDate = this.dataset.date;
 
-function renderWeeks() {
-  const container = document.querySelector('.container');
-
-  const totalWeeks = getWeeksFromYears(YEARS_LIFE_EXPECTANCY);
-
-  for (let i = 0; i < totalWeeks; i++) {
-    const week = document.createElement('div');
-
-    week.classList.add('week');
-    week.id = i;
-
-    week.addEventListener('click', () => {
-      const modal = week.lastChild;
-
-      modal.classList.add('show-modal');
-
-      window.onclick = function (event) {
-        if (event.target === modal) {
-          modal.classList.remove('show-modal');
+        if (storedDate) {
+          const dayDate = new Date(storedDate);
+          const tooltipElement = createTooltip(weekId, dayId, dayDate);
+          this.appendChild(tooltipElement);
         }
-      };
+      }
     });
 
-    renderDays(week);
-    container.appendChild(week);
+    weekElement.appendChild(dayElement);
   }
 }
 
-function renderTooltip(weekId, dayId, date) {
-  const formatedDate = date.toDateString();
-  const dayName = getDayName(dayId);
-  const weekNumber = Number(weekId) + 1;
+function renderWeeksGrid() {
+  const gridContainer = document.querySelector('.container');
+  const totalWeeks = convertYearsToWeeks(LIFE_EXPECTANCY_YEARS);
+  const weeksFragment = document.createDocumentFragment();
 
-  const tooltip = document.createElement('div');
+  for (let weekIndex = 0; weekIndex < totalWeeks; weekIndex++) {
+    const weekElement = document.createElement('div');
 
-  tooltip.innerHTML = `
-    <span>${`Week ${weekNumber}`}</span>
-    <span>${dayName}</span>
-    <span>${formatedDate}</span>
-  `;
+    weekElement.className = 'week';
+    weekElement.id = weekIndex;
 
-  tooltip.classList.add('tooltip');
+    weekElement.addEventListener('click', function (event) {
+      if (!userBirthDate) return;
 
-  return tooltip;
+      const clickedDay = event.target.closest('.day');
+      if (!clickedDay) return;
+
+      let modalElement = this.querySelector('.modal');
+
+      if (!modalElement) {
+        const lastDayOfWeek = this.children[6];
+        const weekEndDate = lastDayOfWeek.dataset.date;
+
+        if (weekEndDate) {
+          modalElement = createModal(this.id, weekEndDate, userBirthDate);
+          this.appendChild(modalElement);
+        }
+      }
+
+      if (modalElement) {
+        modalElement.className = 'modal show-modal';
+
+        window.onclick = function (event) {
+          if (event.target === modalElement) {
+            modalElement.className = 'modal';
+          }
+        };
+      }
+    });
+
+    createDaysForWeek(weekElement);
+    weeksFragment.appendChild(weekElement);
+  }
+
+  gridContainer.appendChild(weeksFragment);
 }
 
-function renderModal(weekId, dateString, birthDate) {
+function createTooltip(weekId, dayId, date) {
+  const formattedDate = date.toDateString();
+  const weekdayName = getWeekdayName(dayId);
   const weekNumber = Number(weekId) + 1;
-  const date = new Date(dateString);
 
-  const age = getAge(birthDate, date);
+  const tooltipElement = document.createElement('div');
+  tooltipElement.className = 'tooltip';
 
-  const dateEnd = date.toDateString();
-  date.setDate(date.getDate() - 6);
-  const dateStart = date.toDateString();
+  const weekNumberSpan = document.createElement('span');
+  weekNumberSpan.textContent = `Week ${weekNumber}`;
 
-  const modal = document.createElement('div');
+  const weekdaySpan = document.createElement('span');
+  weekdaySpan.textContent = weekdayName;
+
+  const dateSpan = document.createElement('span');
+  dateSpan.textContent = formattedDate;
+
+  tooltipElement.appendChild(weekNumberSpan);
+  tooltipElement.appendChild(weekdaySpan);
+  tooltipElement.appendChild(dateSpan);
+
+  return tooltipElement;
+}
+
+function createModal(weekId, dateString, birthDate) {
+  const weekNumber = Number(weekId) + 1;
+  const weekEndDate = new Date(dateString);
+
+  const ageAtWeek = calculateAge(birthDate, weekEndDate);
+
+  const endDateFormatted = weekEndDate.toDateString();
+  weekEndDate.setDate(weekEndDate.getDate() - 6);
+  const startDateFormatted = weekEndDate.toDateString();
+
+  const modalElement = document.createElement('div');
+  modalElement.className = 'modal';
+  modalElement.id = weekId;
+
   const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
 
-  modalContent.innerHTML = `
-    <span>${`Week: ${weekNumber}`}</span>
-    <span>${`Age: ${age}`}</span>
-    <span>${`Date Start: ${dateStart}`}</span>
-    <span>${`Date End: ${dateEnd}`}</span>
-  `;
+  const weekNumberSpan = document.createElement('span');
+  weekNumberSpan.textContent = `Week: ${weekNumber}`;
 
-  modalContent.classList.add('modal-content');
-  modal.classList.add('modal');
-  modal.id = weekId;
+  const ageSpan = document.createElement('span');
+  ageSpan.textContent = `Age: ${ageAtWeek}`;
 
-  modal.appendChild(modalContent);
+  const startDateSpan = document.createElement('span');
+  startDateSpan.textContent = `Date Start: ${startDateFormatted}`;
 
-  return modal;
+  const endDateSpan = document.createElement('span');
+  endDateSpan.textContent = `Date End: ${endDateFormatted}`;
+
+  modalContent.appendChild(weekNumberSpan);
+  modalContent.appendChild(ageSpan);
+  modalContent.appendChild(startDateSpan);
+  modalContent.appendChild(endDateSpan);
+
+  modalElement.appendChild(modalContent);
+
+  return modalElement;
 }
 
-function setDaysLived(date) {
-  const timeNow = new Date();
-  const timeBirthday = new Date(date + 'T00:00:00');
+function paintLifeProgress(birthdayString) {
+  const currentDate = new Date();
+  const birthDateTime = new Date(birthdayString + 'T00:00:00');
 
-  const birthDay = timeBirthday.getDate();
-  const birthMonth = timeBirthday.getMonth();
+  const birthdayDay = birthDateTime.getDate();
+  const birthdayMonth = birthDateTime.getMonth();
 
-  const birthDate = new Date(timeBirthday);
+  userBirthDate = new Date(birthDateTime);
 
-  const days = document.querySelectorAll('.day');
+  const allDayElements = document.querySelectorAll('.day');
 
-  let daysLived = getDaysFromMiliseconds(
-    timeNow.getTime() - timeBirthday.getTime(),
+  let totalDaysLived = convertMillisecondsToDays(
+    currentDate.getTime() - birthDateTime.getTime(),
   );
 
-  let paintCondition = timeBirthday.getDay() - 1; //? If paintCondition equals 0, the day sunday on week 1 is painted. 0-6 => sunday-saturday
-  let week;
+  let daysUntilMonday = birthDateTime.getDay() - 1;
 
-  timeBirthday.setDate(
-    timeBirthday.getDate() -
-      (timeBirthday.getDay() - 1 >= 0 ? timeBirthday.getDay() - 1 : 6),
+  birthDateTime.setDate(
+    birthDateTime.getDate() -
+      (birthDateTime.getDay() - 1 >= 0 ? birthDateTime.getDay() - 1 : 6),
   );
 
-  days.forEach((day) => {
-    //* Append Modal into each week item.
-    if (!week || week.id !== day.parentElement.id) {
-      week = day.parentElement;
+  const livedDayElements = [];
+  const birthdayDayElements = [];
+  const lostDayElements = [];
+  const notLivedDayElements = [];
+
+  allDayElements.forEach((dayElement) => {
+    dayElement.dataset.date = birthDateTime.toDateString();
+
+    const dayOfWeek = dayElement.id;
+    const isWeekend =
+      dayOfWeek === '4' || dayOfWeek === '5' || dayOfWeek === '6';
+
+    if (daysUntilMonday > 0) {
+      notLivedDayElements.push(dayElement);
+    } else if (daysUntilMonday <= 0 && totalDaysLived) {
+      livedDayElements.push(dayElement);
+      totalDaysLived--;
+    } else if (isWeekend) {
+      lostDayElements.push(dayElement);
     }
 
-    //* Append tooltip into each day item.
-    const tooltip = renderTooltip(week.id, day.id, timeBirthday);
-    day.appendChild(tooltip);
-
-    //* Paint days.
-    if (paintCondition <= 0 && daysLived) {
-      day.classList.add('lived');
-      daysLived--;
-    }
-
-    //* Paint birthday.
     if (
-      birthDay === timeBirthday.getDate() &&
-      birthMonth === timeBirthday.getMonth()
+      birthdayDay === birthDateTime.getDate() &&
+      birthdayMonth === birthDateTime.getMonth()
     ) {
-      day.classList.add('birthday');
+      birthdayDayElements.push(dayElement);
     }
 
-    if (day.id === '6') {
-      const modal = renderModal(
-        week.id,
-        timeBirthday.toDateString(),
-        birthDate,
-      );
-      week.appendChild(modal);
-    }
-
-    paintCondition--;
-    timeBirthday.setDate(timeBirthday.getDate() + 1);
+    daysUntilMonday--;
+    birthDateTime.setDate(birthDateTime.getDate() + 1);
   });
+
+  notLivedDayElements.forEach((dayElement) => {
+    dayElement.className = 'day not-lived';
+  });
+
+  livedDayElements.forEach((dayElement) => {
+    dayElement.className = 'day lived';
+  });
+
+  birthdayDayElements.forEach((dayElement) => {
+    dayElement.className = 'day lived birthday';
+  });
+
+  lostDayElements.forEach((dayElement) => {
+    dayElement.className = 'day day-lost';
+  });
+
+  const totalDays = allDayElements.length;
+  const livedDays = livedDayElements.length;
+  const lostDays = lostDayElements.length;
+  const notLivedDays = notLivedDayElements.length;
+  const remainingDays = totalDays - livedDays - lostDays - notLivedDays;
+
+  const remainingDaysElement = document.querySelector('.remaining-days');
+  remainingDaysElement.textContent = `Remaining days of life: ${remainingDays} days`;
 }
 
-function reset() {
-  const weeks = document.querySelectorAll('.week');
+function clearLifeProgress() {
+  userBirthDate = null;
 
-  if (weeks.item(0).lastChild.classList.value !== 'modal') return;
+  const allWeekElements = document.querySelectorAll('.week');
 
-  weeks.forEach((week) => {
-    week.removeChild(week.lastChild); //* Remove all modals.
+  allWeekElements.forEach((weekElement) => {
+    const modalElement = weekElement.querySelector('.modal');
+    if (modalElement) {
+      weekElement.removeChild(modalElement);
+    }
 
-    const days = week.childNodes;
+    const dayElements = weekElement.childNodes;
 
-    days.forEach((day) => {
-      day.removeChild(day.lastChild); //* Remove all tooltips.
-
-      day.classList.remove('lived'); //* Remove painted cells.
-      day.classList.remove('birthday'); //* Remove painted cells.
+    dayElements.forEach((dayElement) => {
+      const tooltipElement = dayElement.querySelector('.tooltip');
+      if (tooltipElement) {
+        dayElement.removeChild(tooltipElement);
+      }
+      dayElement.className = 'day';
+      delete dayElement.dataset.date;
     });
   });
+
+  const remainingDaysElement = document.querySelector('.remaining-days');
+  remainingDaysElement.textContent = '';
 }
 
-function initializate() {
-  renderWeeks();
+function initializeApp() {
+  renderWeeksGrid();
 
-  const date = document.querySelector('.date');
+  const birthdayInput = document.querySelector('.date');
 
-  date.value = ''; //* Reset his value.
+  birthdayInput.value = '';
 
-  date.addEventListener('change', (event) => {
+  birthdayInput.addEventListener('change', (event) => {
     const { value } = event.target;
 
     if (value) {
-      setDaysLived(value);
+      paintLifeProgress(value);
     } else {
-      reset();
+      clearLifeProgress();
     }
   });
 }
 
-initializate();
+initializeApp();
