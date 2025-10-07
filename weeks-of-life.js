@@ -192,6 +192,10 @@ function paintLifeProgress(birthdayString) {
 
   const allDayElements = document.querySelectorAll('.day');
 
+  allDayElements.forEach((dayElement) => {
+    dayElement.className = 'day';
+  });
+
   let totalDaysLived = convertMillisecondsToDays(
     currentDate.getTime() - birthDateTime.getTime(),
   );
