@@ -218,21 +218,21 @@ function paintLifeProgress(birthdayString) {
     const dayOfWeek = dayElement.id;
     const isWeekend =
       dayOfWeek === '4' || dayOfWeek === '5' || dayOfWeek === '6';
+    const isBirthday =
+      birthdayDay === birthDateTime.getDate() &&
+      birthdayMonth === birthDateTime.getMonth();
+
+    if (isBirthday) {
+      birthdayDayElements.push(dayElement);
+    }
 
     if (daysUntilMonday > 0) {
       notLivedDayElements.push(dayElement);
     } else if (daysUntilMonday <= 0 && totalDaysLived) {
       livedDayElements.push(dayElement);
       totalDaysLived--;
-    } else if (isWeekend) {
+    } else if (isWeekend && !isBirthday) {
       lostDayElements.push(dayElement);
-    }
-
-    if (
-      birthdayDay === birthDateTime.getDate() &&
-      birthdayMonth === birthDateTime.getMonth()
-    ) {
-      birthdayDayElements.push(dayElement);
     }
 
     daysUntilMonday--;
@@ -247,12 +247,12 @@ function paintLifeProgress(birthdayString) {
     dayElement.className = 'day lived';
   });
 
-  birthdayDayElements.forEach((dayElement) => {
-    dayElement.className = 'day lived birthday';
-  });
-
   lostDayElements.forEach((dayElement) => {
     dayElement.className = 'day day-lost';
+  });
+
+  birthdayDayElements.forEach((dayElement) => {
+    dayElement.className = 'day lived birthday';
   });
 
   const totalDays = allDayElements.length;
