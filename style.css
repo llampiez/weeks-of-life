@@ -256,39 +256,6 @@ body {
   width: 100%;
 }
 
-.date-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.date-buttons button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.reset-button {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.reset-button:hover {
-  background-color: #c0392b;
-}
-
-.accept-button {
-  background-color: #27ae60;
-  color: white;
-}
-
-.accept-button:hover {
-  background-color: #229954;
-}
-
 .header {
   width: 300px;
   margin: 10px auto 10px auto;

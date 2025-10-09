@@ -305,7 +305,10 @@ function paintLifeProgress(birthdayString, socialMediaHoursPerDay) {
     if (requiredFullDays !== undefined) {
       if (fullDays >= requiredFullDays) {
         dayElement.className = 'day day-social-media-full';
-      } else if (fullDays === requiredFullDays - 1 && partialDayPercentage > 0) {
+      } else if (
+        fullDays === requiredFullDays - 1 &&
+        partialDayPercentage > 0
+      ) {
         dayElement.className = 'day day-social-media-partial';
         dayElement.style.background = `linear-gradient(to right, #FF69B4 ${partialDayPercentage}%, white ${partialDayPercentage}%)`;
         dayElement.style.border = '1px solid gray';
@@ -327,11 +330,6 @@ function paintLifeProgress(birthdayString, socialMediaHoursPerDay) {
   const dayBeforeDeath = new Date(deathDate);
   dayBeforeDeath.setDate(dayBeforeDeath.getDate() - 1);
   dayBeforeDeath.setHours(0, 0, 0, 0);
-
-  const totalDaysFromTodayToBeforeDeath =
-    Math.floor(
-      (dayBeforeDeath.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-    ) + 1;
 
   const daysInCurrentPartialWeek = Math.floor(
     (nextMonday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
@@ -382,7 +380,9 @@ function paintLifeProgress(birthdayString, socialMediaHoursPerDay) {
     usableDaysInCurrentWeek + usableDaysInCompleteWeeks + usableDaysInFinalWeek;
 
   const remainingDaysElement = document.querySelector('.remaining-days');
-  remainingDaysElement.textContent = `Remaining days of life: ${Math.round(usableDaysRemaining * 100) / 100} days`;
+  remainingDaysElement.textContent = `Remaining days of life: ${
+    Math.round(usableDaysRemaining * 100) / 100
+  } days`;
 }
 
 function clearLifeProgress() {
@@ -401,8 +401,6 @@ function initializeApp() {
   renderWeeksGrid();
 
   const dateInput = document.querySelector('.date-input');
-  const resetButton = document.querySelector('.reset-button');
-  const acceptButton = document.querySelector('.accept-button');
   const filterButton = document.querySelector('.filter-button');
   const filterLostButton = document.querySelector('.filter-lost-button');
   const phoneUsageButtons = document.querySelectorAll('.phone-usage-btn');
@@ -421,79 +419,84 @@ function initializeApp() {
   let phoneUsageHours = 2.5;
   let isPanelCollapsed = true;
   let recalculateTimeout = null;
+  let birthdayTimeout = null;
 
   floatingPanel.classList.add('collapsed');
   togglePanelBtn.textContent = '+';
 
-  resetButton.addEventListener('click', () => {
-    dateInput.value = '';
-    clearLifeProgress();
-
-    if (isFiltered) {
-      const allWeeks = document.querySelectorAll('.week');
-      allWeeks.forEach((weekElement) => {
-        weekElement.classList.remove('hidden');
-      });
-      isFiltered = false;
-      filterButton.textContent = 'Hide Past';
-    }
-
-    if (isLostFiltered) {
-      const lostDays = document.querySelectorAll('.day-lost');
-      const livedDays = document.querySelectorAll('.lived');
-      const lastDay = document.querySelector('.last-day');
-      const allWeeks = document.querySelectorAll('.week');
-      lostDays.forEach((dayElement) => {
-        dayElement.classList.remove('hidden-lost');
-      });
-      livedDays.forEach((dayElement) => {
-        dayElement.classList.remove('hidden-lost');
-      });
-      if (lastDay) {
-        lastDay.classList.remove('hidden-lost');
-      }
-      isLostFiltered = false;
-      filterLostButton.textContent = 'Hide Lost Days';
-    }
-  });
-
-  acceptButton.addEventListener('click', () => {
+  dateInput.addEventListener('change', () => {
     const birthdayString = dateInput.value;
 
+    if (birthdayTimeout) {
+      clearTimeout(birthdayTimeout);
+    }
+
     if (!birthdayString) {
-      alert('Please enter your birthday');
+      clearLifeProgress();
+
+      if (isFiltered) {
+        const allWeeks = document.querySelectorAll('.week');
+        allWeeks.forEach((weekElement) => {
+          weekElement.classList.remove('hidden');
+        });
+        isFiltered = false;
+        filterButton.textContent = 'Hide Past';
+      }
+
+      if (isLostFiltered) {
+        const lostDays = document.querySelectorAll('.day-lost');
+        const livedDays = document.querySelectorAll('.lived');
+        const lastDay = document.querySelector('.last-day');
+        const allWeeks = document.querySelectorAll('.week');
+        lostDays.forEach((dayElement) => {
+          dayElement.classList.remove('hidden-lost');
+        });
+        livedDays.forEach((dayElement) => {
+          dayElement.classList.remove('hidden-lost');
+        });
+        if (lastDay) {
+          lastDay.classList.remove('hidden-lost');
+        }
+        allWeeks.forEach((weekElement) => {
+          weekElement.classList.remove('hidden-empty');
+        });
+        isLostFiltered = false;
+        filterLostButton.textContent = 'Hide Lost Days';
+      }
       return;
     }
 
-    const birthDate = new Date(birthdayString + 'T00:00:00');
-    const today = new Date();
-    const minDate = new Date('1900-01-01T00:00:00');
+    birthdayTimeout = setTimeout(() => {
+      const birthDate = new Date(birthdayString + 'T00:00:00');
+      const today = new Date();
+      const minDate = new Date('1900-01-01T00:00:00');
 
-    if (birthDate > today) {
-      alert('Birthday cannot be in the future');
-      dateInput.value = '';
-      return;
-    }
+      if (birthDate > today) {
+        alert('Birthday cannot be in the future');
+        dateInput.value = '';
+        return;
+      }
 
-    if (birthDate < minDate) {
-      alert('Please enter a valid birth year (1900 or later)');
-      dateInput.value = '';
-      return;
-    }
+      if (birthDate < minDate) {
+        alert('Please enter a valid birth year (1900 or later)');
+        dateInput.value = '';
+        return;
+      }
 
-    const age = calculateAge(birthDate, today);
+      const age = calculateAge(birthDate, today);
 
-    if (age > 150) {
-      alert('Please enter a realistic birth date');
-      dateInput.value = '';
-      return;
-    }
+      if (age > 150) {
+        alert('Please enter a realistic birth date');
+        dateInput.value = '';
+        return;
+      }
 
-    const gridContainer = document.querySelector('.container');
-    gridContainer.innerHTML = '';
-    renderWeeksGrid(birthDate);
+      const gridContainer = document.querySelector('.container');
+      gridContainer.innerHTML = '';
+      renderWeeksGrid(birthDate);
 
-    paintLifeProgress(birthdayString, phoneUsageHours);
+      paintLifeProgress(birthdayString, phoneUsageHours);
+    }, 1000);
   });
 
   filterButton.addEventListener('click', () => {
