@@ -7,10 +7,64 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="floating-panel">
+      <div class="panel-header">
+        <h3>Controls</h3>
+        <button class="toggle-panel-btn">−</button>
+      </div>
+      <div class="panel-content">
+        <div class="panel-section">
+          <button class="filter-button">Hide Past</button>
+          <button class="filter-lost-button">Hide Lost Days</button>
+        </div>
+        <div class="panel-section">
+          <h4>Phone Usage</h4>
+          <p class="phone-usage-display">2.5h per day</p>
+          <div class="phone-usage-buttons">
+            <button class="phone-usage-btn" data-hours="-1">-1h</button>
+            <button class="phone-usage-btn" data-hours="-0.5">-0.5h</button>
+            <button class="phone-usage-btn" data-hours="0.5">+0.5h</button>
+            <button class="phone-usage-btn" data-hours="1">+1h</button>
+            <button class="phone-usage-btn" data-hours="2">+2h</button>
+            <button class="phone-usage-btn" data-hours="3">+3h</button>
+          </div>
+        </div>
+        <div class="panel-section">
+          <h4>Income Widget</h4>
+          <div class="income-inputs">
+            <input
+              type="number"
+              class="income-per-hour"
+              placeholder="Income/hour" />
+            <input
+              type="number"
+              class="hours-per-day"
+              placeholder="Hours/day" />
+          </div>
+          <div class="income-buttons">
+            <button class="calculate-income-btn">Calculate</button>
+            <button class="reset-income-btn">Reset</button>
+          </div>
+          <p class="income-display"></p>
+        </div>
+        <div class="panel-section">
+          <h4>Real State Widget</h4>
+          <p class="real-state-description">20% of income for housing</p>
+          <p class="real-state-display"></p>
+        </div>
+      </div>
+    </div>
     <div>
       <header class="header">
-        <label>Enter your birthday</label>
-        <input type="date" class="date" />
+        <h1>Weeks of Life App</h1>
+        <div class="birthday-container">
+          <label>Enter your birthday</label>
+          <input type="date" class="date-input" required />
+          <div class="date-buttons">
+            <button class="reset-button">Reset</button>
+            <button class="accept-button">Accept</button>
+          </div>
+        </div>
         <p class="remaining-days"></p>
       </header>
       <section class="container"></section>

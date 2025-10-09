@@ -8,6 +8,286 @@ body {
   margin: 0px;
 }
 
+.floating-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 250px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.floating-panel h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.toggle-panel-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.toggle-panel-btn:hover {
+  background-color: #2980b9;
+}
+
+.floating-panel.collapsed {
+  width: auto;
+}
+
+.floating-panel.collapsed .panel-content {
+  display: none;
+}
+
+.floating-panel h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.panel-section {
+  margin-bottom: 20px;
+}
+
+.panel-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-button,
+.filter-lost-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.filter-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.filter-button:hover {
+  background-color: #2980b9;
+}
+
+.filter-lost-button {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.filter-lost-button:hover {
+  background-color: #8e44ad;
+}
+
+.phone-usage-display {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 10px 0;
+}
+
+.phone-usage-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.phone-usage-btn {
+  padding: 8px;
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  transition: background-color 0.3s;
+}
+
+.phone-usage-btn:hover {
+  background-color: #d35400;
+}
+
+.income-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.income-per-hour,
+.hours-per-day {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.income-buttons {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.calculate-income-btn,
+.reset-income-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.calculate-income-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.calculate-income-btn:hover {
+  background-color: #229954;
+}
+
+.reset-income-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reset-income-btn:hover {
+  background-color: #c0392b;
+}
+
+.income-display {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #27ae60;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+.real-state-description {
+  text-align: center;
+  font-size: 12px;
+  color: #7f8c8d;
+  margin: 0 0 10px 0;
+}
+
+.real-state-display {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #3498db;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+.week.hidden {
+  display: none;
+}
+
+.week.hidden-empty {
+  display: none;
+}
+
+.day.hidden-lost {
+  display: none;
+}
+
+.day-social-media-full.hidden-lost {
+  display: none;
+}
+
+.day-social-media-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+.day.after-death {
+  display: none;
+}
+
+.birthday-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.birthday-container label {
+  font-weight: bold;
+}
+
+.date-input {
+  padding: 5px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.date-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.date-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.reset-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reset-button:hover {
+  background-color: #c0392b;
+}
+
+.accept-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.accept-button:hover {
+  background-color: #229954;
+}
+
 .header {
   width: 300px;
   margin: 10px auto 10px auto;
@@ -16,12 +296,13 @@ body {
   text-align: center;
 }
 
-.date {
-  width: 100%;
+.header h1 {
+  margin: 0 0 10px 0;
+  font-style: italic;
 }
 
 .remaining-days {
-  margin: 0px;
+  margin: 10px 0 0 0;
 }
 
 .container {
@@ -38,8 +319,8 @@ body {
 }
 
 .week {
-  height: 70px;
-  width: 30px;
+  height: fit-content;
+  width: fit-content;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -58,19 +339,28 @@ body {
   background-color: gray;
 }
 
-.birthday {
-  background-color: darkred;
-  border: 1px solid darkred;
-}
-
 .day-lost {
   background-color: lightgray;
   border: 1px solid lightgray;
 }
 
+.day-social-media-full {
+  background-color: #ff69b4;
+  border: 1px solid #ff69b4;
+}
+
 .not-lived {
   background-color: black;
   border: 1px solid black;
+}
+
+.last-day {
+  background-color: darkgray;
+  border: 1px solid darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
 }
 
 .day:hover {
@@ -121,9 +411,5 @@ body {
 }
 
 .show-modal {
-  display: block;
-}
-
-.modal-block {
   display: block;
 }
