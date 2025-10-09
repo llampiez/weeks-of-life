@@ -419,8 +419,11 @@ function initializeApp() {
   let isFiltered = false;
   let isLostFiltered = false;
   let phoneUsageHours = 2.5;
-  let isPanelCollapsed = false;
+  let isPanelCollapsed = true;
   let recalculateTimeout = null;
+
+  floatingPanel.classList.add('collapsed');
+  togglePanelBtn.textContent = '+';
 
   resetButton.addEventListener('click', () => {
     dateInput.value = '';
