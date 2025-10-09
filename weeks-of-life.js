@@ -63,32 +63,9 @@ function createDaysForWeek(weekElement) {
   }
 }
 
-function renderWeeksGrid(birthDate = null) {
+function renderWeeksGrid() {
   const gridContainer = document.querySelector('.container');
-  let totalWeeks = convertYearsToWeeks(LIFE_EXPECTANCY_YEARS);
-
-  if (birthDate) {
-    const deathDate = new Date(birthDate);
-    deathDate.setFullYear(deathDate.getFullYear() + LIFE_EXPECTANCY_YEARS);
-
-    const mondayBeforeBirth = new Date(birthDate);
-    mondayBeforeBirth.setDate(
-      mondayBeforeBirth.getDate() -
-        (mondayBeforeBirth.getDay() - 1 >= 0
-          ? mondayBeforeBirth.getDay() - 1
-          : 6),
-    );
-
-    const sundayAfterDeath = new Date(deathDate);
-    const daysUntilSunday = 7 - deathDate.getDay();
-    sundayAfterDeath.setDate(sundayAfterDeath.getDate() + daysUntilSunday);
-
-    const totalDays = Math.ceil(
-      (sundayAfterDeath.getTime() - mondayBeforeBirth.getTime()) /
-        (1000 * 60 * 60 * 24),
-    );
-    totalWeeks = Math.ceil(totalDays / 7);
-  }
+  const totalWeeks = convertYearsToWeeks(100);
 
   const weeksFragment = document.createDocumentFragment();
 
@@ -388,10 +365,15 @@ function paintLifeProgress(birthdayString, socialMediaHoursPerDay) {
 function clearLifeProgress() {
   userBirthDate = null;
 
-  const gridContainer = document.querySelector('.container');
-  gridContainer.innerHTML = '';
-
-  renderWeeksGrid();
+  const allDayElements = document.querySelectorAll('.day');
+  allDayElements.forEach((dayElement) => {
+    dayElement.className = 'day';
+    dayElement.textContent = '';
+    dayElement.style.background = '';
+    dayElement.style.border = '';
+    delete dayElement.dataset.date;
+    delete dayElement.dataset.whitePercentage;
+  });
 
   const remainingDaysElement = document.querySelector('.remaining-days');
   remainingDaysElement.textContent = '';
@@ -492,12 +474,8 @@ function initializeApp() {
         return;
       }
 
-      const gridContainer = document.querySelector('.container');
-      gridContainer.innerHTML = '';
-      renderWeeksGrid(birthDate);
-
       paintLifeProgress(birthdayString, phoneUsageHours);
-    }, 1000);
+    }, 500);
   });
 
   filterButton.addEventListener('click', () => {
