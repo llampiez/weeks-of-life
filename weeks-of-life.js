@@ -401,6 +401,7 @@ function initializeApp() {
   renderWeeksGrid();
 
   const dateInput = document.querySelector('.date-input');
+  dateInput.value = '';
   const filterButton = document.querySelector('.filter-button');
   const filterLostButton = document.querySelector('.filter-lost-button');
   const phoneUsageButtons = document.querySelectorAll('.phone-usage-btn');
