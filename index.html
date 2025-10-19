@@ -7,19 +7,24 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="floating-panel">
+    <div class="floating-panel collapsed">
       <div class="panel-header">
         <h3>Controls</h3>
-        <button class="toggle-panel-btn">−</button>
+        <button class="toggle-panel-btn">+</button>
       </div>
       <div class="panel-content">
         <div class="panel-section">
+          <h4>View Filters</h4>
           <button class="filter-button">Hide Past</button>
           <button class="filter-lost-button">Hide Lost Days</button>
         </div>
         <div class="panel-section">
           <h4>Phone Usage</h4>
-          <p class="phone-usage-display">2.5h per day</p>
+          <p class="phone-usage-display">2.5h per day (5 days/week)</p>
+          <div class="phone-days-toggle">
+            <button class="phone-days-btn active" data-days="5">5 days/week</button>
+            <button class="phone-days-btn" data-days="7">7 days/week</button>
+          </div>
           <div class="phone-usage-buttons">
             <button class="phone-usage-btn" data-hours="-1">-1h</button>
             <button class="phone-usage-btn" data-hours="-0.5">-0.5h</button>
@@ -30,7 +35,77 @@
           </div>
         </div>
         <div class="panel-section">
-          <h4>Income Widget</h4>
+          <h4>Parents Module</h4>
+          <label>Father's Birthday</label>
+          <input type="date" class="father-birthdate" />
+          <p class="father-death-date-display"></p>
+          <p class="father-remaining-days"></p>
+
+          <label>Mother's Birthday</label>
+          <input type="date" class="mother-birthdate" />
+          <p class="mother-death-date-display"></p>
+          <p class="mother-remaining-days"></p>
+        </div>
+        <div class="panel-section">
+          <h4>Work Module</h4>
+          <div class="work-inputs">
+            <label>Days per week</label>
+            <input
+              type="number"
+              class="work-days-per-week"
+              value="5"
+              min="1"
+              max="5"
+              step="1" />
+            <label>Hours per day</label>
+            <input
+              type="number"
+              class="work-hours-per-day"
+              value="8"
+              min="0.5"
+              max="13.5"
+              step="0.5" />
+            <label>Monthly Salary (optional)</label>
+            <input
+              type="number"
+              class="work-monthly-salary"
+              placeholder="Enter salary"
+              min="0" />
+          </div>
+        </div>
+        <div class="panel-section">
+          <h4>Usual Stuff</h4>
+          <p class="usual-stuff-info">~1 hour daily for eating, cooking, etc.</p>
+          <div class="usual-stuff-inputs">
+            <label>Extra Minutes</label>
+            <input
+              type="number"
+              class="usual-stuff-extra-minutes"
+              value="0"
+              min="0"
+              step="1"
+              placeholder="0" />
+          </div>
+          <p class="usual-stuff-display">7.0h per week</p>
+        </div>
+        <div class="panel-section">
+          <h4>Girlfriend Module</h4>
+          <p class="girlfriend-info">Time to get a girlfriend and maintain relationship</p>
+          <div class="girlfriend-checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" class="girlfriend-in-shape-checkbox" />
+              I'm in good physical shape
+            </label>
+          </div>
+          <p class="girlfriend-target-date-display"></p>
+          <p class="girlfriend-remaining-time"></p>
+          <p class="girlfriend-phases-info">
+            <strong>Phase 1 (Searching):</strong> 7h/week<br>
+            <strong>Phase 2 (Relationship):</strong> 10h/week
+          </p>
+        </div>
+        <div class="panel-section">
+          <h4>Income Calculator</h4>
           <div class="income-inputs">
             <input
               type="number"
@@ -46,11 +121,80 @@
             <button class="reset-income-btn">Reset</button>
           </div>
           <p class="income-display"></p>
+          <p class="real-state-description">Real estate (20% income)</p>
+          <p class="real-state-display"></p>
         </div>
         <div class="panel-section">
-          <h4>Real State Widget</h4>
-          <p class="real-state-description">20% of income for housing</p>
-          <p class="real-state-display"></p>
+          <h4>Useless Hobbies</h4>
+          <p class="useless-hobbies-info">Time wasted on meaningless activities</p>
+          <div class="useless-hobbies-checkboxes">
+            <label class="checkbox-label">
+              <input type="checkbox" class="useless-sport-checkbox" />
+              Useless Sport
+              <input type="number" class="useless-sport-hours" value="1" min="1" max="10" step="1" />
+              <span>h/week</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="useless-netflix-checkbox" />
+              Useless Netflix
+              <input type="number" class="useless-netflix-hours" value="1" min="1" max="10" step="1" />
+              <span>h/week</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="useless-videogame-checkbox" />
+              Useless Videogame
+              <input type="number" class="useless-videogame-hours" value="1" min="1" max="10" step="1" />
+              <span>h/week</span>
+            </label>
+          </div>
+          <p class="useless-hobbies-display">0h per week</p>
+        </div>
+        <div class="panel-section">
+          <h4>Body Module</h4>
+          <label>Weekly Gym Hours</label>
+          <div class="gym-hours-buttons">
+            <button class="gym-hour-btn active" data-hours="1">1h</button>
+            <button class="gym-hour-btn" data-hours="2">2h</button>
+            <button class="gym-hour-btn" data-hours="3">3h</button>
+          </div>
+          <label>Travel Time (minutes)</label>
+          <input type="number" class="travel-time-input" value="15" min="0" max="120" />
+          <button class="predict-fitness-btn">Prediction</button>
+          <p class="fitness-target-date-display"></p>
+          <p class="fitness-remaining-days"></p>
+        </div>
+        <div class="panel-section">
+          <h4>Bad Habits</h4>
+          <div class="bad-habits-checkboxes">
+            <label class="checkbox-label">
+              <input type="checkbox" class="alcohol-checkbox" />
+              Regular alcohol consumption
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="cigarettes-checkbox" />
+              Regular cigarette smoking
+            </label>
+          </div>
+          <p class="exercise-benefit-message"></p>
+          <p class="life-reduction-display"></p>
+          <p class="adjusted-death-date-display"></p>
+        </div>
+        <div class="panel-section">
+          <h4>Constructive Activities</h4>
+          <p class="constructive-info">Learning + Practice = 1000 hours to become a good programmer</p>
+          <div class="constructive-inputs">
+            <label>Hours per day</label>
+            <input
+              type="number"
+              class="constructive-hours-per-day"
+              value="0"
+              min="0"
+              max="24"
+              step="0.5" />
+          </div>
+          <p class="constructive-hours-display">0h per week</p>
+          <p class="constructive-target-date-display"></p>
+          <p class="constructive-remaining-days"></p>
         </div>
       </div>
     </div>
@@ -65,6 +209,6 @@
       </header>
       <section class="container"></section>
     </div>
-    <script src="weeks-of-life.js"></script>
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>

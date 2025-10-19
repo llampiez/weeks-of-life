@@ -18,7 +18,9 @@ body {
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 250px;
+  width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .panel-header {
@@ -62,6 +64,12 @@ body {
   display: none;
 }
 
+.panel-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 .floating-panel h4 {
   margin: 0 0 10px 0;
   font-size: 14px;
@@ -69,23 +77,36 @@ body {
 }
 
 .panel-section {
-  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
-.panel-section:last-child {
-  margin-bottom: 0;
+.panel-section h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+  margin-bottom: 12px;
 }
 
 .filter-button,
 .filter-lost-button {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 8px;
+  margin-bottom: 8px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 13px;
   transition: background-color 0.3s;
+}
+
+.filter-button:last-child,
+.filter-lost-button:last-child {
+  margin-bottom: 0;
 }
 
 .filter-button {
@@ -134,6 +155,37 @@ body {
 }
 
 .phone-usage-btn:hover {
+  background-color: #d35400;
+}
+
+.phone-days-toggle {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.phone-days-btn {
+  flex: 1;
+  padding: 8px;
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  transition: background-color 0.3s;
+}
+
+.phone-days-btn.active {
+  background-color: #e67e22;
+}
+
+.phone-days-btn:hover {
+  background-color: #7f8c8d;
+}
+
+.phone-days-btn.active:hover {
   background-color: #d35400;
 }
 
@@ -198,9 +250,9 @@ body {
 
 .real-state-description {
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   color: #7f8c8d;
-  margin: 0 0 10px 0;
+  margin: 10px 0 5px 0;
 }
 
 .real-state-display {
@@ -212,11 +264,518 @@ body {
   min-height: 20px;
 }
 
+/* Work Module Styles */
+.work-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.work-days-per-week,
+.work-hours-per-day,
+.work-monthly-salary {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.work-buttons {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.calculate-work-btn,
+.reset-work-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.calculate-work-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.calculate-work-btn:hover {
+  background-color: #2980b9;
+}
+
+.reset-work-btn {
+  background-color: #e67e22;
+  color: white;
+}
+
+.reset-work-btn:hover {
+  background-color: #d35400;
+}
+
+.work-info-display {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #3498db;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+/* Usual Stuff Module Styles */
+.usual-stuff-info {
+  text-align: center;
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 5px 0 10px 0;
+  font-style: italic;
+}
+
+.usual-stuff-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.usual-stuff-extra-minutes {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.usual-stuff-display {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #f39c12;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+.day-usual-stuff-full {
+  background-color: #f39c12;
+  border: 1px solid #f39c12;
+}
+
+.day-usual-stuff-partial {
+  /* Will have inline background gradient */
+}
+
+.day-usual-stuff-full.hidden-lost {
+  display: none;
+}
+
+.day-usual-stuff-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+/* Girlfriend Module Styles */
+.girlfriend-info {
+  text-align: center;
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 5px 0 10px 0;
+  font-style: italic;
+}
+
+.girlfriend-checkbox {
+  margin: 10px 0;
+}
+
+.girlfriend-target-date-display {
+  font-size: 11px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin: 5px 0 2px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.girlfriend-remaining-time {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 2px 0 10px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.girlfriend-phases-info {
+  font-size: 10px;
+  color: #555;
+  margin: 10px 0 0 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.day-girlfriend-searching-full {
+  background-color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.day-girlfriend-relationship-full {
+  background-color: #c0392b;
+  border: 1px solid #c0392b;
+}
+
+.day-girlfriend-searching-partial {
+  /* Will have inline background gradient */
+}
+
+.day-girlfriend-relationship-partial {
+  /* Will have inline background gradient */
+}
+
+.day-girlfriend-searching-full.hidden-lost {
+  display: none;
+}
+
+.day-girlfriend-searching-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+.day-girlfriend-relationship-full.hidden-lost {
+  display: none;
+}
+
+.day-girlfriend-relationship-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+.panel-section label {
+  display: block;
+  font-size: 12px;
+  margin-top: 8px;
+  color: #555;
+}
+
+.father-birthdate,
+.mother-birthdate {
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.father-death-date-display,
+.mother-death-date-display {
+  font-size: 11px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin: 5px 0 2px 0;
+  min-height: 16px;
+}
+
+.father-remaining-days,
+.mother-remaining-days {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin: 0 0 10px 0;
+  min-height: 18px;
+}
+
+.parent-death-father,
+.parent-death-mother {
+  background-color: darkgray !important;
+  border: 1px solid darkgray !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.parent-death-father {
+  font-size: 10px !important;
+}
+
+.parent-death-mother {
+  font-size: 8px !important;
+}
+
+/* Body Module Styles */
+.gym-hours-buttons {
+  display: flex;
+  gap: 5px;
+  margin: 5px 0 10px 0;
+}
+
+.gym-hour-btn {
+  flex: 1;
+  padding: 10px;
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.gym-hour-btn.active {
+  background-color: #9b59b6;
+}
+
+.travel-time-input {
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  margin: 5px 0 10px 0;
+}
+
+.predict-fitness-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  margin-bottom: 10px;
+}
+
+.predict-fitness-btn:hover {
+  background-color: #8e44ad;
+}
+
+.fitness-target-date-display {
+  font-size: 11px;
+  color: #9b59b6;
+  font-weight: bold;
+  margin: 5px 0 2px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.fitness-remaining-days {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 2px 0 5px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+/* Useless Hobbies Module Styles */
+.useless-hobbies-info {
+  text-align: center;
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 5px 0 10px 0;
+  font-style: italic;
+}
+
+.useless-hobbies-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.useless-hobbies-checkboxes .checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #2c3e50;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.useless-hobbies-checkboxes .checkbox-label input[type='checkbox'] {
+  margin-right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.useless-sport-hours,
+.useless-netflix-hours,
+.useless-videogame-hours {
+  width: 40px;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.useless-hobbies-checkboxes span {
+  font-size: 10px;
+  color: #7f8c8d;
+}
+
+.useless-hobbies-display {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #8e44ad;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+.day-useless-hobbies-full {
+  background-color: #8e44ad;
+  border: 1px solid #8e44ad;
+}
+
+.day-useless-hobbies-partial {
+  /* Will have inline background gradient */
+}
+
+.day-useless-hobbies-full.hidden-lost {
+  display: none;
+}
+
+.day-useless-hobbies-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+/* Constructive Activities Module Styles */
+.constructive-info {
+  text-align: center;
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 5px 0 10px 0;
+  font-style: italic;
+}
+
+.constructive-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.constructive-hours-per-day {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.constructive-hours-display {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1abc9c;
+  margin: 5px 0 0 0;
+  min-height: 20px;
+}
+
+.constructive-target-date-display {
+  font-size: 11px;
+  color: #1abc9c;
+  font-weight: bold;
+  margin: 5px 0 2px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.constructive-remaining-days {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 2px 0 5px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.day-constructive-full {
+  background-color: #1abc9c;
+  border: 1px solid #1abc9c;
+}
+
+.day-constructive-partial {
+  /* Will have inline background gradient */
+}
+
+.day-constructive-full.hidden-lost {
+  display: none;
+}
+
+.day-constructive-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+/* Bad Habits Module Styles */
+.bad-habits-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #2c3e50;
+  cursor: pointer;
+}
+
+.checkbox-label input[type='checkbox'] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.exercise-benefit-message {
+  font-size: 11px;
+  color: #27ae60;
+  font-weight: bold;
+  margin: 10px 0 5px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.life-reduction-display {
+  font-size: 11px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin: 5px 0 2px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.adjusted-death-date-display {
+  font-size: 11px;
+  color: #e67e22;
+  margin: 2px 0 5px 0;
+  min-height: 16px;
+  text-align: center;
+}
+
+.reduced-life-expectancy {
+  opacity: 0.2;
+}
+
 .week.hidden {
   display: none;
 }
 
 .week.hidden-empty {
+  display: none;
+}
+
+.week.childhood-hidden {
   display: none;
 }
 
@@ -229,6 +788,16 @@ body {
 }
 
 .day-social-media-partial.hidden-lost {
+  display: inline-block;
+  width: var(--partial-width);
+  background: white !important;
+}
+
+.day-work-full.hidden-lost {
+  display: none;
+}
+
+.day-work-partial.hidden-lost {
   display: inline-block;
   width: var(--partial-width);
   background: white !important;
@@ -273,6 +842,24 @@ body {
   margin: 10px 0 0 0;
 }
 
+.childhood-bar {
+  height: 50px;
+  width: 100%;
+  background-color: #fff;
+  background-image: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%);
+  background-size: 50px 50px;
+  background-position: 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff,
+    1px 1px 0 #fff;
+  grid-column: 1 / -1;
+}
+
 .container {
   width: 90%;
   margin: 10px auto;
@@ -307,6 +894,10 @@ body {
   background-color: gray;
 }
 
+.today {
+  border: 2px blue !important;
+}
+
 .day-lost {
   background-color: lightgray;
   border: 1px solid lightgray;
@@ -315,6 +906,11 @@ body {
 .day-social-media-full {
   background-color: #ff69b4;
   border: 1px solid #ff69b4;
+}
+
+.day-work-full {
+  background-color: #3498db;
+  border: 1px solid #3498db;
 }
 
 .not-lived {
@@ -380,4 +976,25 @@ body {
 
 .show-modal {
   display: block;
+}
+
+@media (max-width: 768px) {
+  .floating-panel {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+    max-height: 80vh;
+  }
+
+  .panel-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .floating-panel {
+    width: 95%;
+    left: 2.5%;
+    right: 2.5%;
+  }
 }
